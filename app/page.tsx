@@ -23,7 +23,7 @@ export default function HomePage() {
           router.push('/auth/signin')
         }
       } catch (error) {
-        console.error('Error checking auth:', error)
+        console.log("[v0] Auth check error - redirecting to signin")
         router.push('/auth/signin')
       }
     }
@@ -32,9 +32,9 @@ export default function HomePage() {
   }, [router, supabase])
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+    <div className="min-h-screen bg-black flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mx-auto mb-4"></div>
         <p className="text-zinc-400">Loading...</p>
       </div>
     </div>

@@ -53,7 +53,7 @@ export default function DashboardPage() {
           .single()
 
         if (profileError) {
-          console.error('Error fetching profile:', profileError)
+          console.log("[v0] Profile error - user may not have completed setup yet")
         } else {
           setProfile(profileData)
           // Set wallets from profile
@@ -65,7 +65,7 @@ export default function DashboardPage() {
           }
         }
       } catch (error) {
-        console.error('Error loading user data:', error)
+        console.log("[v0] Error loading user data - redirecting to signin")
         router.push('/auth/signin')
       } finally {
         setLoading(false)
@@ -121,7 +121,7 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-white">
             Welcome back{profile?.first_name ? `, ${profile.first_name}` : ''}!
           </h1>
-          <p className="text-zinc-500 mt-1">Your trading journey continues</p>
+          <p className="text-zinc-500 mt-1">Your Void Coin journey continues</p>
         </motion.div>
 
         {/* Wallets Section */}

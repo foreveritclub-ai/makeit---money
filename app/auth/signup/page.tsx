@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -18,7 +19,7 @@ import { useState } from 'react'
 export default function SignUpPage() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -43,22 +44,27 @@ export default function SignUpPage() {
       return
     }
 
+    if (!phoneNumber.trim()) {
+      setError('Please enter your phone number')
+      setIsLoading(false)
+      return
+    }
+
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
+      // Sign up with phone as username and password
+      const { error: signUpError } = await supabase.auth.signUp({
+        email: `${phoneNumber}@void-coin.local`,
         password,
         options: {
-          emailRedirectTo:
-            process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
-            `${window.location.origin}/protected/dashboard`,
           data: {
             first_name: firstName,
             last_name: lastName,
+            phone_number: phoneNumber,
           },
         },
       })
-      if (error) throw error
-      router.push('/auth/signup-success')
+      if (signUpError) throw signUpError
+      router.push('/protected/dashboard')
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred')
     } finally {
@@ -67,14 +73,25 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10 bg-zinc-950">
+    <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10 bg-black">
       <div className="w-full max-w-sm">
         <div className="flex flex-col gap-6">
-          <Card className="bg-zinc-900 border-zinc-800">
+          <div className="text-center">
+            <Image
+              src="/void-coin-logo.png"
+              alt="Void Coin"
+              width={80}
+              height={80}
+              className="mx-auto mb-4"
+            />
+            <h1 className="text-3xl font-bold text-amber-500">Void Coin</h1>
+          </div>
+
+          <Card className="bg-zinc-900 border-amber-600/30">
             <CardHeader>
               <CardTitle className="text-2xl text-white">Create Account</CardTitle>
               <CardDescription className="text-zinc-400">
-                Join VirtuixRW and start your trading journey
+                Join Void Coin and start trading
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -90,7 +107,7 @@ export default function SignUpPage() {
                         type="text"
                         placeholder="John"
                         required
-                        className="bg-zinc-800 border-zinc-700 text-white"
+                        className="bg-zinc-800 border-amber-600/20 text-white"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                       />
@@ -104,24 +121,24 @@ export default function SignUpPage() {
                         type="text"
                         placeholder="Doe"
                         required
-                        className="bg-zinc-800 border-zinc-700 text-white"
+                        className="bg-zinc-800 border-amber-600/20 text-white"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                       />
                     </div>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="email" className="text-zinc-300">
-                      Email
+                    <Label htmlFor="phone" className="text-zinc-300">
+                      Phone Number
                     </Label>
                     <Input
-                      id="email"
-                      type="email"
-                      placeholder="m@example.com"
+                      id="phone"
+                      type="tel"
+                      placeholder="+1 (555) 000-0000"
                       required
-                      className="bg-zinc-800 border-zinc-700 text-white"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      className="bg-zinc-800 border-amber-600/20 text-white"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -133,7 +150,7 @@ export default function SignUpPage() {
                       type="password"
                       placeholder="••••••••"
                       required
-                      className="bg-zinc-800 border-zinc-700 text-white"
+                      className="bg-zinc-800 border-amber-600/20 text-white"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
@@ -147,7 +164,7 @@ export default function SignUpPage() {
                       type="password"
                       placeholder="••••••••"
                       required
-                      className="bg-zinc-800 border-zinc-700 text-white"
+                      className="bg-zinc-800 border-amber-600/20 text-white"
                       value={repeatPassword}
                       onChange={(e) => setRepeatPassword(e.target.value)}
                     />
@@ -159,7 +176,7 @@ export default function SignUpPage() {
                   )}
                   <Button 
                     type="submit" 
-                    className="w-full bg-emerald-600 hover:bg-emerald-700"
+                    className="w-full bg-amber-600 hover:bg-amber-700"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Creating account...' : 'Sign Up'}
@@ -169,7 +186,7 @@ export default function SignUpPage() {
                   Already have an account?{' '}
                   <Link
                     href="/auth/signin"
-                    className="text-emerald-400 hover:text-emerald-300 underline underline-offset-4"
+                    className="text-amber-400 hover:text-amber-300 underline underline-offset-4"
                   >
                     Sign In
                   </Link>
